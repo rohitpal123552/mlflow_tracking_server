@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-mlflow
+  template:
+    metadata:
+      labels:
+        app: fastapi-mlflow
+    spec:
+      containers:
+        - name: fastapi-container
+          image: fastapi-mlflow-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
