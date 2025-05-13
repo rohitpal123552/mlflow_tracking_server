@@ -1,10 +1,40 @@
-FROM python:3.10-slim
+FROM python:3.9-slim
 
-WORKDIR /app
+# Install system dependencies for pyenv and MLflow
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    ca-certificates \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    llvm \
+    libncurses5-dev \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libffi-dev \
+    liblzma-dev \
+    python3-openssl \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install pyenv
+ENV PYENV_ROOT="/root/.pyenv"
+ENV PATH="$PYENV_ROOT/bin:$PATH"
+RUN curl https://pyenv.run | bash
 
-COPY app/ ./app/
+# Install MLflow and virtualenv
+RUN pip install --no-cache-dir mlflow virtualenv
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Set environment variables
+ENV MODEL_URI=runs:/281eaf6510f84fb18e0d60410c14c000/iris_model
+ENV MLFLOW_TRACKING_URI=http://10.100.198.240:5000
+
+EXPOSE 5000
+
+# Serve the model
+CMD ["sh", "-c", "mlflow models serve -m $MODEL_URI --host 0.0.0.0 --port 5000"]
