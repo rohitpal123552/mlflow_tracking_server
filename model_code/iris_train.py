@@ -39,7 +39,7 @@ print(f"Accuracy----------{accuracy}")
 
 ## --------------------------Step 2-Log the model and its metadata to MLflow-------------------------
 # Set our tracking server uri for logging
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://10.108.62.224:5000")
 
 # Create a new MLflow Experiment
 mlflow.set_experiment("iris data")
@@ -70,7 +70,7 @@ with mlflow.start_run():
     print("Logged run ID:", mlflow.active_run().info.run_id)
 
 
-#     curl http://127.0.0.1:5001/invocations \
+# curl http://127.0.0.1:8000/predict \
 #   -H "Content-Type: application/json" \
 #   --data '{
 #     "inputs": [

@@ -7,7 +7,8 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 
 # Update this to match your MLflow model server URL
-MLFLOW_MODEL_URL = "http://mlflow-server:1234/invocations"
+MLFLOW_MODEL_URL = "http://10.108.62.224:5000/invocations"
+# MLFLOW_MODEL_URL = "runs:/8c8336fbf53d4e58a6f35aa57ff7494a/iris_model"
 
 class PredictRequest(BaseModel):
     columns: list
