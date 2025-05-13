@@ -20,7 +20,7 @@ Use Case:
     kubectl configured and working
     Docker installed and authenticated to your container registry
 
--- Step 1 – Containerize MLflow Server
+-- Step 1 – Containerize MLflow Tracking UI
   Create a Dockerfile for MLflow Tracking Server:
   place here dockerfile.mlflow image
 
@@ -29,11 +29,11 @@ Use Case:
   docker push your-docker-user/mlflow-server
 
 -- Step 2 – Deploy MLflow to Kubernetes
-  Create mlflow-deployment.yaml:
+  Create mlflow-ui-deployment.yaml:
   place here manifiests file image
 
 -- Step 3 – Expose MLflow UI
-  Create mlflow-service.yaml:
+  Create mlflow-ui-service.yaml:
   place here service manifiests image
 
   Apply the resources:
@@ -45,8 +45,7 @@ Use Case:
   import mlflow
 
   # Set our tracking server uri for logging
-  mlflow.set_tracking_uri("http://<mlflow-service-ip>")
-  mlflow.set_experiment("MyExperiment")
+  mlflow.set_tracking_uri("http://<mlflow-service-ip>") # cluster-ip
 
   # Create a new MLflow Experiment
   mlflow.set_experiment("iris data")
@@ -86,11 +85,11 @@ Use Case:
   docker push your-docker-user/mlflow-model
 
 -- Step 6 – Deploy MLflow Model Server to Kubernetes
-  Create MLflow Model Server deployment.yaml:
+  Create mLflow-model-deployment.yaml:
   place here manifiests file image
 
 -- Step 7 – Expose MLflow Model Server UI
-  Create MLflow Model Server service.yaml:
+  Create mLflow-model-service.yaml:
   place here service manifiests image
 
   Apply the resources:
