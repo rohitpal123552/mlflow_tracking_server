@@ -1,20 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fastapi-mlflow
+  name: mlflow-model-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fastapi-mlflow
+      app: mlflow-model-server
   template:
     metadata:
       labels:
-        app: fastapi-mlflow
+        app: mlflow-model-server
     spec:
       containers:
-        - name: fastapi-container
-          image: fastapi-mlflow-service:latest
-          imagePullPolicy: Never
+        - name: mlflow-model
+          image: mlflow-model:v1
           ports:
-            - containerPort: 8000
+            - containerPort: 5000
+          env:
+            - name: MODEL_URI
+              value: runs:/281eaf6510f84fb18e0d60410c14c000/iris_model
+            - name: MLFLOW_TRACKING_URI
+              value: http://10.100.198.240:5000
