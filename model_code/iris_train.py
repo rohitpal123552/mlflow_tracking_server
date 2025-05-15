@@ -32,7 +32,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy}")
 
 # ------------------ Step 3: Log to MLflow ------------------
-mlflow.set_tracking_uri("http://10.103.189.150:5000")
+mlflow.set_tracking_uri("http://localhost:32000")
 mlflow.set_experiment("iris data")
 
 with mlflow.start_run():
