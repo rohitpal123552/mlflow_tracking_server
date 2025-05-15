@@ -3,10 +3,10 @@ name: Train Iris Model
 on:
   push:
     paths:
-      - '**.py'
-      - '**.ipynb'
-      - 'iris_dataset.csv'
-      - 'requirements.txt'
+      - 'model_code/**/*.py'
+      - 'model_code/**/*.ipynb'
+      - 'model_code/iris_dataset.csv'
+      - 'model_code/requirements.txt'
   workflow_dispatch:
 
 jobs:
@@ -22,18 +22,16 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install dependencies and run script
+      working-directory: model_code
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Run Python script
-      run: python model_train.py
+        python model_train.py
 
     # Optional: Run Jupyter Notebook instead
     # - name: Run Jupyter Notebook
+    #   working-directory: model_code
     #   run: |
-    #     pip install nbconvert
+    #     pip install jupyter nbconvert
     #     jupyter nbconvert --to notebook --execute iris_model_training.ipynb
-
-
