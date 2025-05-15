@@ -19,6 +19,9 @@ spec:
             - containerPort: 5000
           env:
             - name: MODEL_URI
-              value: runs:/281eaf6510f84fb18e0d60410c14c000/iris_model
+              value: runs:/914197b20d374e638033a3006fa64a28/iris_model  # Replace dynamically
             - name: MLFLOW_TRACKING_URI
-              value: http://10.100.198.240:5000
+              value: http://10.100.198.240:5000  # Replace dynamically
+          command: ["sh", "-c"]
+          args:
+            - mlflow models serve -m $MODEL_URI --host 0.0.0.0 --port 5000
