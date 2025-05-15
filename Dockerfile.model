@@ -30,11 +30,4 @@ RUN curl https://pyenv.run | bash
 # Install MLflow and virtualenv
 RUN pip install --no-cache-dir mlflow virtualenv
 
-# Set environment variables
-ENV MODEL_URI=runs:/281eaf6510f84fb18e0d60410c14c000/iris_model
-ENV MLFLOW_TRACKING_URI=http://10.100.198.240:5000
-
 EXPOSE 5000
-
-# Serve the model
-CMD ["sh", "-c", "mlflow models serve -m $MODEL_URI --host 0.0.0.0 --port 5000"]
