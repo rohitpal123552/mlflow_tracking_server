@@ -27,7 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        python model_train.py
+        python iris_train.py
 
     # Optional: Run Jupyter Notebook instead
     # - name: Run Jupyter Notebook
