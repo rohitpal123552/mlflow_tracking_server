@@ -113,3 +113,42 @@ Use Case:
      ]
    }'
  -->
+
+ name: Train Iris Model
+
+on:
+  push:
+    paths:
+      - '**.py'
+      - '**.ipynb'
+      - 'iris_dataset.csv'
+      - 'requirements.txt'
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Python script
+      run: python model_train.py
+
+    # Optional: Run Jupyter Notebook instead
+    # - name: Run Jupyter Notebook
+    #   run: |
+    #     pip install nbconvert
+    #     jupyter nbconvert --to notebook --execute iris_model_training.ipynb
+
