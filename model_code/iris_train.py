@@ -32,22 +32,22 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy}")
 
 # ------------------ Step 3: Log to MLflow ------------------
-mlflow.set_tracking_uri("http://localhost:32000")
-mlflow.set_experiment("iris data")
+# mlflow.set_tracking_uri("http://localhost:32000")
+# mlflow.set_experiment("iris data")
 
-with mlflow.start_run():
-    mlflow.log_params(params)
-    mlflow.log_metric("accuracy", accuracy)
-    mlflow.set_tag("Training Info", "LR model trained from CSV")
+# with mlflow.start_run():
+#     mlflow.log_params(params)
+#     mlflow.log_metric("accuracy", accuracy)
+#     mlflow.set_tag("Training Info", "LR model trained from CSV")
 
-    signature = infer_signature(X_train, lr.predict(X_train))
+#     signature = infer_signature(X_train, lr.predict(X_train))
 
-    mlflow.sklearn.log_model(
-        sk_model=lr,
-        artifact_path="iris_model",
-        signature=signature,
-        input_example=X_train,
-        registered_model_name="iris-data",
-    )
+#     mlflow.sklearn.log_model(
+#         sk_model=lr,
+#         artifact_path="iris_model",
+#         signature=signature,
+#         input_example=X_train,
+#         registered_model_name="iris-data",
+#     )
 
-    print("Logged run ID:", mlflow.active_run().info.run_id)
+#     print("Logged run ID:", mlflow.active_run().info.run_id)
