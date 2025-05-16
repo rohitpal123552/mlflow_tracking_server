@@ -16,18 +16,33 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      
+    - name: Install sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies and run script
-      working-directory: model_code
+    - name: Copy files to remote server
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        python iris_train.py
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" scp -o StrictHostKeyChecking=no -P ${{ secrets.SSH_PORT }} \
+        model_code/iris_dataset.csv model_code/iris_train.py \
+        ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
+
+    - name: Run training script on remote server
+      run: |
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} \
+        ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+        "cd /tmp && python3 iris_train.py"
+
+    # - name: Set up Python
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: '3.10'
+
+    # - name: Install dependencies and run script
+    #   working-directory: model_code
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install -r requirements.txt
+    #     python iris_train.py
 
     # Optional: Run Jupyter Notebook instead
     # - name: Run Jupyter Notebook
