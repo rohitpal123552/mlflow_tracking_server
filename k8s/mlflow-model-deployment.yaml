@@ -14,14 +14,14 @@ spec:
     spec:
       containers:
         - name: mlflow-model
-          image: mlflow-model:v1
+          image: yogeshbhatt1000/mlflow-model:latest
           ports:
             - containerPort: 5000
           env:
             - name: MODEL_URI
-              value: runs:/914197b20d374e638033a3006fa64a28/iris_model  # Replace dynamically
+              value: runs:/9095deddd60a4baba872f8afaa4e894b/iris_model  # Replace dynamically
             - name: MLFLOW_TRACKING_URI
-              value: http://10.100.198.240:5000  # Replace dynamically
+              value: http://10.110.234.157:5000  # Replace dynamically
           command: ["sh", "-c"]
           args:
             - mlflow models serve -m $MODEL_URI --host 0.0.0.0 --port 5000

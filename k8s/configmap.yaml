@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iris-model-config
+data:
+  config.ini: |
+    [mlflow]
+    tracking_uri = http://10.110.234.157:5000
+    model_name = iris-data
+    alias = production
+    port = 5000

@@ -1,0 +1,51 @@
+2025-05-30 20:39:27,580 - ERROR - Error fetching models: 'MlflowClient' object has no attribute 'list_registered_models'
+2025-05-30 20:39:27,580 - ERROR - Failed to list models
+Traceback (most recent call last):
+  File "/home/ubuntu/mlflow_tracking_server/api/main.py", line 49, in list_models
+    models = get_all_models()
+  File "/home/ubuntu/mlflow_tracking_server/api/mlflow_client.py", line 57, in get_all_models
+    models = client.list_registered_models()
+AttributeError: 'MlflowClient' object has no attribute 'list_registered_models'. Did you mean: 'get_registered_model'?
+2025-05-30 20:40:51,049 - DEBUG - Found 1 versions for model 'iris-data'.
+2025-05-30 20:40:51,049 - INFO - Retrieved versions for model: iris-data
+2025-05-30 20:45:26,460 - ERROR - Error listing experiments: 'MlflowClient' object has no attribute 'list_experiments'
+2025-05-30 20:45:26,460 - ERROR - Failed to list experiments
+Traceback (most recent call last):
+  File "/home/ubuntu/mlflow_tracking_server/api/main.py", line 79, in get_experiments
+    experiments = list_experiments()
+  File "/home/ubuntu/mlflow_tracking_server/api/mlflow_client.py", line 17, in list_experiments
+    experiments = client.list_experiments()
+AttributeError: 'MlflowClient' object has no attribute 'list_experiments'. Did you mean: 'get_experiment'?
+2025-05-30 20:48:26,747 - DEBUG - Found 6 runs for experiment 912827603961845947.
+2025-05-30 20:48:26,748 - INFO - Retrieved runs for experiment_id: 912827603961845947
+2025-05-30 20:51:43,477 - DEBUG - Found 6 runs for experiment 912827603961845947.
+2025-05-30 20:51:43,478 - DEBUG - Extracted model names: {'iris_model'}
+2025-05-30 20:51:43,478 - INFO - Extracted model names from experiment_id: 912827603961845947
+2025-05-30 21:29:00,104 - DEBUG - Found 1 registered models.
+2025-05-30 21:29:00,104 - INFO - Successfully listed all models.
+2025-05-30 21:35:51,459 - DEBUG - Found 3 registered models.
+2025-05-30 21:35:51,460 - INFO - Successfully listed all models.
+2025-05-30 21:37:18,091 - DEBUG - Found 0 artifacts for run_id '6ed6637904b74c19ad3f5954f505315a' at path 'mlflow-artifacts:/912827603961845947/6ed6637904b74c19ad3f5954f505315a/artifacts/iris_model'.
+2025-05-30 21:37:18,092 - INFO - Retrieved artifacts for run_id: 6ed6637904b74c19ad3f5954f505315a
+2025-05-30 22:18:08,923 - DEBUG - Found 1 experiments.
+2025-05-30 22:18:08,923 - INFO - Successfully listed experiments.
+2025-05-30 22:30:30,530 - DEBUG - Found 3 registered models.
+2025-05-30 22:30:30,530 - INFO - Successfully listed all models.
+2025-05-30 22:30:37,238 - DEBUG - Found 1 experiments.
+2025-05-30 22:30:37,238 - INFO - Successfully listed experiments.
+2025-05-30 22:31:21,822 - DEBUG - Found 6 runs for experiment 912827603961845947.
+2025-05-30 22:31:21,822 - INFO - Retrieved runs for experiment_id: 912827603961845947
+2025-05-30 22:32:05,103 - DEBUG - Found 1 versions for model 'iris-data'.
+2025-05-30 22:32:05,103 - INFO - Retrieved versions for model: iris-data
+2025-05-31 18:12:05,001 - DEBUG - Latest version for model 'iris-data' is 12 with run_id 6ed6637904b74c19ad3f5954f505315a
+2025-05-31 18:12:05,001 - INFO - Retrieved latest run_id for model: iris-data
+2025-05-31 18:13:02,903 - DEBUG - Found 1 versions for model 'iris-data'.
+2025-05-31 18:13:02,904 - INFO - Retrieved versions for model: iris-data
+2025-05-31 18:13:20,184 - DEBUG - Found 1 experiments.
+2025-05-31 18:13:20,184 - INFO - Successfully listed experiments.
+2025-05-31 18:13:33,799 - DEBUG - Found 3 registered models.
+2025-05-31 18:13:33,799 - INFO - Successfully listed all models.
+2025-05-31 18:13:52,913 - DEBUG - Found 6 runs for experiment 912827603961845947.
+2025-05-31 18:13:52,914 - INFO - Retrieved runs for experiment_id: 912827603961845947
+2025-05-31 18:29:43,910 - DEBUG - Latest version for model 'iris-data' is 12 with run_id 6ed6637904b74c19ad3f5954f505315a
+2025-05-31 18:29:43,910 - INFO - Retrieved latest run_id for model: iris-data
