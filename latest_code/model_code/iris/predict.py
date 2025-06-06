@@ -6,7 +6,7 @@ import time
 with open("iris_test_input.json", "r") as f:
     input_data = f.read()
 
-url = "http://10.106.179.193:80/invocations"
+url = "http://10.103.42.91:80/invocations"
 headers = {"Content-Type": "application/json"}
 
 while True:
