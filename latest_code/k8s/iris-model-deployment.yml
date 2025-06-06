@@ -30,7 +30,7 @@ spec:
             memory: "512Mi"
         volumeMounts:
           - name: mlflow-data
-            mountPath: /app/mlruns
+            mountPath: /mnt/mlflow-data
           - name: config-volume
             mountPath: /app/config
             readOnly: true

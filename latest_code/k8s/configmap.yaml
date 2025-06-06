@@ -5,7 +5,7 @@ metadata:
 data:
   config.ini: |
     [mlflow]
-    tracking_uri = http://10.110.234.157:5000
+    tracking_uri = http://10.109.47.85:5000
     model_name = iris-data
-    alias = production
+    alias = dev
     port = 5000
