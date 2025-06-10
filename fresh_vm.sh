@@ -153,7 +153,7 @@ BACKUP_DIR="/root/user_backup_$(date +%Y%m%d_%H%M%S)"
 DRY_RUN=false
 
 function capture_baseline() {
-    echo "\n📦 Capturing clean OS baseline..."
+    echo "Capturing clean OS baseline..."
     mkdir -p "$BASELINE_DIR"
 
     apt-mark showmanual > "$BASELINE_DIR/manual_packages.txt"
@@ -161,24 +161,31 @@ function capture_baseline() {
     find /etc /usr/local /var -type f 2>/dev/null > "$BASELINE_DIR/files.txt"
     hostnamectl status | grep "Static hostname" | awk '{print $3}' > "$BASELINE_DIR/hostname.txt"
 
-    echo "✅ Baseline saved in $BASELINE_DIR"
+    echo "Baseline saved in $BASELINE_DIR"
     exit 0
 }
 
 function backup_user_data() {
-    echo "\n🧾 Backing up user-installed data to $BACKUP_DIR"
+    echo "Backing up user-installed data to $BACKUP_DIR"
     mkdir -p "$BACKUP_DIR"
 
     apt-mark showmanual > "$BACKUP_DIR/manual_packages_backup.txt"
     dpkg --get-selections > "$BACKUP_DIR/dpkg_selection.txt"
 
-    cut -d: -f1 /etc/passwd | grep -vxFf "$BASELINE_DIR/users.txt" | while read user; do
-        HOME_DIR=$(eval echo "~$user")
-        if [ -d "$HOME_DIR" ]; then
-            echo "  🔸 Backing up $user home ($HOME_DIR)"
-            tar czf "$BACKUP_DIR/${user}_home_backup.tar.gz" "$HOME_DIR"
-        fi
-    done
+    custom_users=$(cut -d: -f1 /etc/passwd | grep -vxFf "$BASELINE_DIR/users.txt" || true)
+
+    if [[ -z "$custom_users" ]]; then
+        echo "No custom users found to backup."
+    else
+        echo "$custom_users" | while read user; do
+            echo "Found custom user: $user"
+            HOME_DIR=$(eval echo "~$user")
+            if [ -d "$HOME_DIR" ]; then
+                echo "Backing up home directory: $HOME_DIR"
+                tar czf "$BACKUP_DIR/${user}_home_backup.tar.gz" "$HOME_DIR"
+            fi
+        done
+    fi
 
     cp -a /root/.ssh "$BACKUP_DIR/root_ssh" 2>/dev/null || true
     cp -a /etc/systemd/system/*.service "$BACKUP_DIR/systemd_services/" 2>/dev/null || true
@@ -187,13 +194,13 @@ function backup_user_data() {
 }
 
 function reset_system() {
-    echo "\n⚠️ This will RESET your system to a clean state."
+    echo "This will RESET your system to a clean state."
     read -p "Type YES to create a backup and continue: " confirm
-    [[ "$confirm" != "YES" ]] && { echo "❌ Aborted"; exit 1; }
+    [[ "$confirm" != "YES" ]] && { echo "Aborted"; exit 1; }
 
     backup_user_data
 
-    echo "\n📦 Checking for user-installed APT packages..."
+    echo "Checking for user-installed APT packages..."
     comm -23 <(sort <(apt-mark showmanual)) <(sort "$BASELINE_DIR/manual_packages.txt") > /tmp/user_apt_packages.txt
     if $DRY_RUN; then
         echo "Would remove APT packages:"; cat /tmp/user_apt_packages.txt
@@ -204,17 +211,23 @@ function reset_system() {
         sudo rm -rf /var/lib/apt/lists/*
     fi
 
-    echo "\n👤 Checking for non-system users..."
-    cut -d: -f1 /etc/passwd | grep -vxFf "$BASELINE_DIR/users.txt" > /tmp/custom_users.txt
-    if $DRY_RUN; then
-        echo "Would delete users:"; cat /tmp/custom_users.txt
+    echo "Checking for non-system users..."
+    custom_users=$(cut -d: -f1 /etc/passwd | grep -vxFf "$BASELINE_DIR/users.txt" || true)
+
+    if [[ -z "$custom_users" ]]; then
+        echo "No custom users found to delete."
     else
-        while read user; do
-            sudo deluser --remove-home "$user" || true
-        done < /tmp/custom_users.txt
+        echo "$custom_users" > /tmp/custom_users.txt
+        if $DRY_RUN; then
+            echo "Would delete users:"; cat /tmp/custom_users.txt
+        else
+            while read user; do
+                sudo deluser --remove-home "$user" || true
+            done < /tmp/custom_users.txt
+        fi
     fi
 
-    echo "\n🗑 Comparing and checking for extra files..."
+    echo "Comparing and checking for extra files..."
     find /etc /usr/local /var -type f 2>/dev/null > /tmp/current_files.txt
     comm -23 <(sort /tmp/current_files.txt) <(sort "$BASELINE_DIR/files.txt") > /tmp/extra_files.txt
     if $DRY_RUN; then
@@ -223,7 +236,7 @@ function reset_system() {
         while read f; do rm -f "$f" || true; done < /tmp/extra_files.txt
     fi
 
-    echo "\n🧼 Cleaning logs, temp, and systemd junk..."
+    echo "Cleaning logs, temp, and systemd junk..."
     if ! $DRY_RUN; then
         rm -rf /var/log/*
         journalctl --rotate
@@ -232,7 +245,7 @@ function reset_system() {
         rm -rf /var/tmp/*
     fi
 
-    echo "\n🔑 Checking SSH key removal..."
+    echo "Checking SSH key removal..."
     if $DRY_RUN; then
         find /home /root -name "authorized_keys"
     else
@@ -241,7 +254,7 @@ function reset_system() {
         find /home -type d -name ".ssh" -exec rm -rf {} +
     fi
 
-    echo "\n🔄 Hostname reset..."
+    echo "Hostname reset..."
     DEFAULT_HOSTNAME=$(cat "$BASELINE_DIR/hostname.txt")
     if $DRY_RUN; then
         echo "Would set hostname to $DEFAULT_HOSTNAME"
@@ -249,7 +262,12 @@ function reset_system() {
         hostnamectl set-hostname "$DEFAULT_HOSTNAME"
     fi
 
-    echo "\n📜 Clearing shell history..."
+    echo "Changing root password to 'abc123'..."
+    if ! $DRY_RUN; then
+        echo "root:abc123" | sudo chpasswd
+    fi
+
+    echo "Clearing shell history..."
     if $DRY_RUN; then
         echo "Would clear bash histories"
     else
@@ -258,7 +276,7 @@ function reset_system() {
         find /home -name ".bash_history" -exec rm -f {} \;
     fi
 
-    echo "\n🔥 Checking UFW firewall reset..."
+    echo "Checking UFW firewall reset..."
     if command -v ufw &>/dev/null; then
         if $DRY_RUN; then
             echo "Would reset UFW firewall"
@@ -267,8 +285,50 @@ function reset_system() {
         fi
     fi
 
-    echo "\n✅ Dry run complete. Nothing has been deleted." && $DRY_RUN && exit 0
-    echo "✅ System has been reset. Backup is in: $BACKUP_DIR"
+    echo -e "Cleaning directories with folder-by-folder"
+    if $DRY_RUN; then
+        echo -e "Would delete in /opt:"
+        find /opt -mindepth 1 -maxdepth 1
+
+        echo -e "Would delete in /home/ubuntu:"
+        find /home/ubuntu -mindepth 1 -maxdepth 1 ! -name "$(basename "$0")"
+
+        echo -e "Would delete in /root (excluding baseline, backup, script, and snap):"
+        find /root -mindepth 1 -maxdepth 1 \
+            ! -path "$BASELINE_DIR" \
+            ! -path "$BACKUP_DIR" \
+            ! -name "$(basename "$0")" \
+            ! -path "/root/snap"
+    else
+        echo -e "Deleting contents of /opt..."
+        find /opt -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+
+        echo -e "Deleting contents of /home/ubuntu (excluding script)..."
+        find /home/ubuntu -mindepth 1 -maxdepth 1 ! -name "$(basename "$0")" -exec rm -rf {} \;
+
+        echo -e "Deleting contents of /root (excluding baseline, backup, script, and snap)..."
+        find /root -mindepth 1 -maxdepth 1 \
+            ! -path "$BASELINE_DIR" \
+            ! -path "$BACKUP_DIR" \
+            ! -name "$(basename "$0")" \
+            ! -path "/root/snap" \
+            -exec rm -rf {} \;
+    fi
+
+
+    echo "Waiting for 30 seconds before reboot..."
+    sleep 30
+
+    echo "Rebooting system..."
+    if ! $DRY_RUN; then
+        sudo reboot
+    fi
+
+    if $DRY_RUN; then
+        echo "Dry run complete. Nothing has been deleted." && $DRY_RUN && exit 0
+    else
+        echo "System has been reset. Backup is in: $BACKUP_DIR"
+    fi
 }
 
 function usage() {
@@ -285,5 +345,3 @@ case "${1:-}" in
     --dry-run) DRY_RUN=true; reset_system ;;
     *) usage ;;
 esac
-
-
